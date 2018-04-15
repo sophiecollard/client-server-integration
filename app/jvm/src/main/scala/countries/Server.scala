@@ -6,6 +6,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 import countries.api.CountriesApi
 import countries.repositories.CountriesRepository
+import countries.views.CountriesView
 
 import scala.io.StdIn
 
@@ -19,10 +20,11 @@ object Server {
 
     val countriesRepository = new CountriesRepository()
     val countriesApi = new CountriesApi(countriesRepository)
+    val countriesView = new CountriesView()
 
     val routes = pathPrefix("api") {
       countriesApi.routes
-    }
+    } ~ countriesView.routes
 
     val (host, port) = ("0.0.0.0", 8080)
     val bindingFuture = Http().bindAndHandle(routes, host, port)
