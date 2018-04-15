@@ -1,4 +1,4 @@
-package simple
+package countries
 
 import scalatags.Text.all._
 
@@ -7,7 +7,7 @@ object Page {
 
   val appId = "app"
 
-  val boot = s"Client.main(document.getElementById('$appId'))"
+  val boot = s"CountriesClient.main(document.getElementById('$appId'))"
 
   val skeleton =
     html(
