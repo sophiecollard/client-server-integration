@@ -8,6 +8,7 @@ val app = crossProject.settings(
   unmanagedSourceDirectories in Compile +=
     baseDirectory.value  / "shared" / "main" / "scala",
   libraryDependencies ++= Seq(
+    "com.lihaoyi" %%% "autowire"  % "0.2.6",
     "com.lihaoyi" %%% "scalatags" % "0.6.7",
     "com.lihaoyi" %%% "upickle"   % "0.6.5"
   ),
