@@ -1,9 +1,9 @@
 package simple
 
-import scalatags.JsDom.all._
+import autowire._
 import org.scalajs.dom
 import org.scalajs.dom.html
-import org.scalajs.dom.ext.Ajax
+import scalatags.JsDom.all._
 
 import scalajs.concurrent.JSExecutionContext.Implicits.queue
 import scalajs.js.annotation.{JSExport, JSExportTopLevel}
@@ -13,13 +13,11 @@ import scalajs.js.annotation.{JSExport, JSExportTopLevel}
 object Client {
 
   @JSExport("main")
-  def main(container: html.Div) = {
+  def main(container: html.Div): Unit = {
     val inputBox = input.render
     val outputBox = ul.render
 
-    def update() = Ajax.post("/ajax/list", inputBox.value).foreach { xhr =>
-      println(s"[debug] response text: ${xhr.responseText}")
-      val data = upickle.default.read[Seq[FileData]](xhr.responseText)
+    def update(): Unit = Ajaxer[FileData.Api].list(inputBox.value).call().foreach { data =>
       outputBox.innerHTML = ""
       for (FileData(name, size) <- data) {
         outputBox.appendChild(
