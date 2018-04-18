@@ -7,7 +7,14 @@ import scala.concurrent.{ExecutionContext, Future}
 
 final class CountriesRepository(implicit ec: ExecutionContext) {
 
-  private var Store: Map[Country.Id, Country] = Map.empty
+  private var Store: Map[Country.Id, Country] = {
+    val fi = Country(Country.Id.random, "Finland", Some("Suomi"))
+    val fr = Country(Country.Id.random, "France", None)
+    val nl = Country(Country.Id.random, "Netherlands", Some("Nederland"))
+    val se = Country(Country.Id.random, "Sweden", Some("Sverige"))
+    val uk = Country(Country.Id.random, "United Kingdom", None)
+    Map(fi.id -> fi, fr.id -> fr, nl.id -> nl, se.id -> se, uk.id -> uk)
+  }
 
   def upsert(country: Country): Future[Unit] = Future {
     Store += (country.id -> country)
