@@ -8,11 +8,11 @@ import scala.concurrent.{ExecutionContext, Future}
 final class CountriesRepository(implicit ec: ExecutionContext) {
 
   private var Store: Map[Country.Id, Country] = {
-    val fi = Country(Country.Id.random, "Finland", Some("Suomi"))
-    val fr = Country(Country.Id.random, "France", None)
-    val nl = Country(Country.Id.random, "Netherlands", Some("Nederland"))
-    val se = Country(Country.Id.random, "Sweden", Some("Sverige"))
-    val uk = Country(Country.Id.random, "United Kingdom", None)
+    val fi = Country(Country.Id.random, "Finland", Some("Suomi"), None)
+    val fr = Country(Country.Id.random, "France", None, Some("https://bit.ly/2HRrZgX"))
+    val nl = Country(Country.Id.random, "Netherlands", Some("Nederland"), Some("https://bit.ly/2HkkUsk"))
+    val se = Country(Country.Id.random, "Sweden", Some("Sverige"), None)
+    val uk = Country(Country.Id.random, "United Kingdom", None, None)
     Map(fi.id -> fi, fr.id -> fr, nl.id -> nl, se.id -> se, uk.id -> uk)
   }
 

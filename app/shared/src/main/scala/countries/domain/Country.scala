@@ -3,7 +3,7 @@ package countries.domain
 import java.util.UUID
 
 
-final case class Country(id: Country.Id, name: String, localName: Option[String])
+final case class Country(id: Country.Id, name: String, localName: Option[String], picture: Option[String])
 
 
 object Country {
@@ -12,7 +12,8 @@ object Country {
     Country(
       id = Id(UUID.randomUUID()),
       name = input.name,
-      localName = input.localName
+      localName = input.localName,
+      picture = input.picture
     )
 
   import io.circe.generic.semiauto._

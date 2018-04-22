@@ -103,9 +103,13 @@ object CountriesClient {
         case "" => None
         case s => Some(s)
       }
+      val pictureLink = pictureLinkInput.value match {
+        case "" => None
+        case s => Some(s)
+      }
       Ajax.post(
         url = s"/api/countries",
-        data = CountryInput(name, localName).asJson.spaces2,
+        data = CountryInput(name, localName, pictureLink).asJson.spaces2,
         headers = Map("Content-Type" -> "application/json")
       ).foreach { xhr =>
         xhr.status match {
@@ -188,12 +192,13 @@ object CountriesClient {
   }
 
   private def constructCardImage(country: Country): TypedTag[html.Div] = {
+    val pictureLink = country.picture.getOrElse("https://bulma.io/images/placeholders/1280x960.png")
     div(
       cls := "card-image",
       figure(
         cls := "image is-4by3",
         img(
-          src := "https://bulma.io/images/placeholders/1280x960.png",
+          src := pictureLink,
           alt := "picture"
         )
       )
