@@ -107,9 +107,10 @@ object CountriesClient {
         case "" => None
         case s => Some(s)
       }
+      val about = aboutInput.value
       Ajax.post(
         url = s"/api/countries",
-        data = CountryInput(name, localName, pictureLink).asJson.spaces2,
+        data = CountryInput(name, localName, pictureLink, about).asJson.spaces2,
         headers = Map("Content-Type" -> "application/json")
       ).foreach { xhr =>
         xhr.status match {
@@ -227,12 +228,7 @@ object CountriesClient {
     )
     val content = div(
       cls := "content",
-      raw(
-        """
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          Phasellus nec iaculis mauris.
-          """.stripMargin
-      )
+      raw(country.about)
     )
     div(
       cls := "card-content",

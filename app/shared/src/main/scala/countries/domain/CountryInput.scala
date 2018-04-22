@@ -1,6 +1,7 @@
 package countries.domain
 
-final case class CountryInput(name: String, localName: Option[String], picture: Option[String])
+
+final case class CountryInput(name: String, localName: Option[String], picture: Option[String], about: String)
 
 
 object CountryInput {
