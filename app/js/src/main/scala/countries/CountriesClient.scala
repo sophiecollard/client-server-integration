@@ -29,27 +29,73 @@ object CountriesClient {
       placeholder := "local name"
     ).render
 
+    val pictureLinkInput = input(
+      cls := "input",
+      placeholder := "picture link"
+    ).render
+
+    val aboutInput = textarea(
+      cls := "textarea"
+    ).render
+
     val createButton = button(
       cls := "button is-info",
       "Add country"
     ).render
 
-    // tiles
-    val countryTiles = div(
-      cls := "tile is-ancestor",
+    val formColumn = div(
+      cls := "column is-4",
       div(
-        id := "left-tile",
-        cls := "tile is-parent is-vertical is-3"
+        cls := "field",
+        label(cls := "label", "Name"),
+        div(cls := "control", nameInput)
       ),
       div(
-        id := "centre-tile",
-        cls := "tile is-parent is-vertical is-3"
+        cls := "field",
+        label(cls := "label", "Local name"),
+        div(cls := "control", localNameInput)
       ),
       div(
-        id := "right-tile",
-        cls := "tile is-parent is-vertical is-3"
+        cls := "field",
+        label(cls := "label", "Picture link"),
+        div(cls := "control", pictureLinkInput)
+      ),
+      div(
+        cls := "field",
+        label(cls := "label", "About"),
+        div(cls := "control", aboutInput)
+      ),
+      div(
+        cls := "field",
+        div(cls := "control", createButton)
+      )
+    )
+
+    // columns
+    val countryColumns = div(
+      cls := "column is-8",
+      div(
+        cls := "columns",
+        div(
+          id := "left-country-column",
+          cls := "column is-4"
+        ),
+        div(
+          id := "centre-country-column",
+          cls := "column is-4"
+        ),
+        div(
+          id := "right-country-column",
+          cls := "column is-4"
+        )
       )
     ).render
+
+    val columns = div(
+      cls := "columns",
+      countryColumns,
+      formColumn
+    )
 
     def create(): Unit = {
       val name = nameInput.value
@@ -63,7 +109,7 @@ object CountriesClient {
         headers = Map("Content-Type" -> "application/json")
       ).foreach { xhr =>
         xhr.status match {
-          case 201 => list(countryTiles, page = 1, perPage = 10)
+          case 201 => list(countryColumns, page = 1, perPage = 10)
           case _   => () // todo: Add error handling
         }
       }
@@ -74,7 +120,7 @@ object CountriesClient {
     nameInput.onkeyup = (e: dom.KeyboardEvent) => if (e.keyCode == 13) create()
     localNameInput.onkeyup = (e: dom.KeyboardEvent) => if (e.keyCode == 13) create()
     createButton.onclick = (e: dom.Event) => create()
-    list(countryTiles, page = 1, perPage = 10)
+    list(countryColumns, page = 1, perPage = 10)
 
     container.appendChild(
       div(
@@ -84,59 +130,41 @@ object CountriesClient {
           style := "font-weight: 400; padding-top: 100px;",
           "Countries"
         ),
-        div(
-          cls := "field is-grouped",
-          div(
-            cls := "control",
-            nameInput
-          ),
-          div(
-            cls := "control",
-            localNameInput
-          ),
-          div(
-            cls := "control",
-            createButton
-          )
-        ),
-        br,
-        countryTiles
+        columns
       ).render
     )
   }
 
-  def delete(countryTiles: html.Div, id: Country.Id): Unit = {
+  def delete(countryColumns: html.Div, id: Country.Id): Unit = {
     Ajax.delete(s"/api/countries/${id.value.toString}").foreach { xhr =>
       xhr.status match {
-        case 200 => list(countryTiles, page = 1, perPage = 10)
+        case 200 => list(countryColumns, page = 1, perPage = 10)
         case _   => () // todo: Add error handling
       }
     }
   }
 
-  def list(countryTiles: html.Div, page: Int, perPage: Int): Unit = {
+  def list(countryColumns: html.Div, page: Int, perPage: Int): Unit = {
     Ajax.get(s"/api/countries?page=$page&per_page=$perPage").foreach { xhr =>
       val data = decode[List[Country]](xhr.responseText)
-      countryTiles.querySelector("#left-tile").innerHTML = ""
-      countryTiles.querySelector("#centre-tile").innerHTML = ""
-      countryTiles.querySelector("#right-tile").innerHTML = ""
+      countryColumns.querySelector("#left-country-column").innerHTML = ""
+      countryColumns.querySelector("#centre-country-column").innerHTML = ""
+      countryColumns.querySelector("#right-country-column").innerHTML = ""
       data match {
         case Right(countries) =>
           for ((country, index) <- countries.zipWithIndex) {
-            val countryCard = renderCountryCard(countryTiles, country)
-            val tileSelector =
-              if (index % 3 == 0) "#left-tile"
-              else if (index % 3 == 1) "#centre-tile"
-              else "#right-tile"
-            countryTiles.querySelector(tileSelector).appendChild(
-              div(
-                cls := "tile is-child",
-                countryCard
-              ).render
-            )
+            val countryCard = renderCountryCard(countryColumns, country)
+            val tileSelector = index % 3 match {
+              case 0 => "#left-country-column"
+              case 1 => "#centre-country-column"
+              case _ => "#right-country-column"
+            }
+            countryColumns
+              .querySelector(tileSelector)
+              .appendChild(countryCard)
           }
         case Left(_) =>
-          countryTiles.appendChild(
+          countryColumns.appendChild(
             p(
               color := "red",
               "error loading countries"
@@ -146,12 +174,13 @@ object CountriesClient {
     }
   }
 
-  def renderCountryCard(countryTiles: html.Div, country: Country): html.Div = {
+  def renderCountryCard(countryColumns: html.Div, country: Country): html.Div = {
     val cardImage = constructCardImage(country)
     val cardContent = constructCardContent(country)
-    val cardFooter = constructCardFooter(countryTiles, country.id)
+    val cardFooter = constructCardFooter(countryColumns, country.id)
     div(
       cls := "card",
+      style := "margin-bottom: 20px;",
       cardImage,
       cardContent,
       cardFooter
@@ -207,10 +236,10 @@ object CountriesClient {
     )
   }
 
-  private def constructCardFooter(countryTiles: html.Div, countryId: Country.Id): TypedTag[html.Element] = {
+  private def constructCardFooter(countryColumns: html.Div, countryId: Country.Id): TypedTag[html.Element] = {
     val editButton = a(cls := "card-footer-item", "Edit")
     val deleteButton = a(cls := "card-footer-item", "Delete").render
-    deleteButton.onclick = (e: dom.Event) => delete(countryTiles, countryId)
+    deleteButton.onclick = (e: dom.Event) => delete(countryColumns, countryId)
     footer(
       cls := "card-footer",
       editButton,
