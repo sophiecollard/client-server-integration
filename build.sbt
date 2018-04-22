@@ -8,6 +8,10 @@ val app = crossProject.settings(
   unmanagedSourceDirectories in Compile +=
     baseDirectory.value  / "shared" / "main" / "scala",
 
+  scalacOptions ++= Seq(
+    "-P:scalajs:sjsDefinedByDefault"
+  ),
+
   resolvers += "jitpack" at "https://jitpack.io",
 
   libraryDependencies ++= Seq(
