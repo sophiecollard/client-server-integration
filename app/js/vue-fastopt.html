@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Todo</title>
+    <!--<script src="./target/scala-2.12/app-jsdeps.js"></script>-->
+    <!--<script src="./target/scala-2.12/app-fastopt.js"></script>-->
+</head>
+
+<!--<body onload="VueClient.main">-->
+<body>
+    <div id="app">
+        <div>
+            <input v-on:keyup.enter="addTask" v-model="task">
+        </div>
+
+        <!-- special text if there are no todo items -->
+        <div v-if="list.length == 0">
+            <em>Nothing to do! Add items above.</em>
+        </div>
+
+        <!-- loop and create a div for each task -->
+        <div v-for="(task, index) in list">
+            <input type="checkbox" v-model="task.done" />
+            <span v-bind:class="{done: task.done}">
+                {{ task.text }}
+            </span>
+            <button v-on:click="rmTask(index)">Remove</button>
+        </div>
+    </div>
+
+    <script src="./target/scala-2.12/app-jsdeps.js"></script>
+    <script src="./target/scala-2.12/app-fastopt.js"></script>
+</body>
+
+</html>
