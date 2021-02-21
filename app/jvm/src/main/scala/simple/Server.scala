@@ -25,7 +25,7 @@ object Server extends FileData.Api {
               Page.skeleton.render
             )
           }
-        } ~ getFromResourceDirectory("")
+        } ~ getFromResourceDirectory("") // needed to get app-fastopt.js on load
       } ~ post {
         path("ajax" / Segments) { segments =>
           entity(as[String]) { e =>
